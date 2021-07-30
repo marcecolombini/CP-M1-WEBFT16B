@@ -40,6 +40,26 @@ const {
 var isAncestor = function(genealogyTree, ancestor, descendant){
   // Tu código aca:
 
+  //Si no hay ancestros
+  if (genealogyTree[ancestor].length <= 0) return false;
+
+  //Recorro el objeto de genealogyTree
+  for (let i = 0; i < genealogyTree[ancestor].length; i++){
+    //Guardo ancestro actual en aux
+    var aux = genealogyTree[ancestor][i]
+
+    // Si ancestro es igual a descendiente
+    if (aux === descendant){
+      return true;
+    }
+
+    // Si existen objetos en el árbol, llamamos a la función desde la pos. actual
+    if (genealogyTree[aux].length > 0){
+      return isAncestor(genealogyTree, aux, descendant)
+    }
+  }
+  //Si no encuetra nada
+  return false;
 }
 
 
@@ -78,6 +98,7 @@ var isAncestor = function(genealogyTree, ancestor, descendant){
 function secuenciaHenry(obj, n) {
   // Tu código aca:
 
+
 }
 
 // ---------------------
@@ -99,6 +120,25 @@ function secuenciaHenry(obj, n) {
 LinkedList.prototype.size = function(){
   // Tu código aca:
 
+  // Creo contador
+  var aux = 0;
+
+  // Si no hay 'head' significa que la lista esta vacia. Se devuelve '0'
+  if (this.head === null){
+    return 0;
+  } else {
+    // Si existe 'head'. Creo un puntero apuntando a 'head'
+    var current = this.head;
+
+    // Recorro la lista
+    while (current.next){
+      aux++;
+      current = current.next;
+    }
+
+    // Devuelvo el contador sumado el último nodo que su 'next' tiene valor 'null' porque no se tiene en cuenta durante el while
+    return (aux + 1);
+  }
 }
 
 
@@ -120,6 +160,40 @@ LinkedList.prototype.size = function(){
 LinkedList.prototype.switchPos = function(pos1, pos2){
   // Tu código aca:
 
+  // Creo 2 punteros. Uno para cada posición
+  var current = this.head;
+  var current2 = this.head;
+
+  // Si pos1 o pos2 son mayorres al tamaño de la lista o menores a 0 devuelvo 'false'
+  if (pos1 > this.size() || pos1 < 0 || pos2 > this.size() || pos2 < 0) return false;
+
+  // Si no hay 'head'
+  else if (this.head === null) return false;
+  else {
+    // Recorro con el primer puntero
+    for (let i = 0; i < pos1; i++){
+      current = current.next;
+    }
+
+    // Guardo el valor de current
+    var aux = current.value;
+
+    // Recorro con el segundo puntero
+    for (let i = 0; i < pos2; i++){
+      current2 = current2.next;
+    }
+
+    // Guardo el valor de current2
+    var aux2 = current2.value;
+
+    // Cambio de posición los valores
+    current.value = aux2;
+    current2.value = aux;
+
+    // Devuelvo 'true'
+    return true;
+  }
+
 }
 
 // EJERCICIO 5
@@ -136,6 +210,27 @@ LinkedList.prototype.switchPos = function(pos1, pos2){
 var mergeLinkedLists = function(linkedListOne, linkedListTwo){
   // Tu código aca:
 
+  //Creo una nueva lista
+  var lista = new LinkedList();
+
+  // Creo dos punteros, uno para cada lista.
+  var current = linkedListOne.head;
+  var current2 =linkedListTwo.head;
+
+  // Mientras haya 'current' y 'current2'
+  while (current && current2){
+
+    // Agrego el valor actual a la nueva lista
+    lista.add(current.value)
+    lista.add(current2.value)
+
+    // Asigno el valor del siguiente nodo
+    current = current.next;
+    current2 = current2.next;
+  }
+
+  // Devuelvo la nueva lista
+  return lista;
 }
 
 
@@ -208,6 +303,20 @@ var cardGame = function(playerOneCards, playerTwoCards){
 BinarySearchTree.prototype.height = function(){
   // Tu código aca:
 
+  // Si no hay nodos
+  if (!this.value) return 0;
+
+  // Si no hay nodos a la izquierda ni derecha, solo tengo un nivel
+  if (this.left === null && this.right === null) return 1;
+
+  // Recorro rama izquierda hasta el final
+  if (this.left === null) return 1 + this.right.height();
+
+  // Recorro rama derecha hasta el final
+  if (this.right === null) return 1 + this.left.height();
+
+  // Comparo altura izquierda y derecha. Devuelve el mas grande sumado el primer nodo.
+  return 1 + Math.max(this.left.height(), this.right.height())
 }
 
 
@@ -258,6 +367,33 @@ var binarySearch = function (array, target) {
 var specialSort = function(array, orderFunction) {
   // Tu código aca:
 
+  //Creo una condición con valor 'true'
+  var swap = true;
+
+  //Mientras 'swap' sea verdadero
+  while(swap) {
+    // Condición de corte
+    swap = false;
+
+    // Recorro el array
+    for (let i = 0; i < array.length - 1; i++) {
+
+      // Si la edad del segundo elemento es menor
+      if (orderFunction(array[i], array[i+1]) === -1) {
+
+        // Aplico bubbleSort
+        var aux = array[i];
+        array[i] = array[i+1];
+        array[i+1] = aux;
+
+        // Cambiamos a true para continuar recorriendo
+        swap = true;
+      }
+    }
+  }
+  return array;
+
+
 }
 
 // ----- Closures -----
@@ -291,6 +427,25 @@ var specialSort = function(array, orderFunction) {
 function closureDetect(symptoms, min) {
   // Tu código aca:
 
+  // Creo el closure
+  return function(persona) {
+    
+    // Creo contador de síntomas
+    var sintomas = 0;
+
+    // Recorro array 'symptoms'
+    for (let i = 0; i < symptoms.length; i++) {
+
+      // Si incluye algún valor del array 'symptoms', síntomas aumenta
+      if (symptoms.includes(persona.symptoms[i])) {
+        sintomas++;
+      }
+    }
+
+    // Si 'sintomas' es mayor a 'min', tiene covid
+    if (sintomas >= min) return true;
+    else return false;
+  }
 }
 
 // -------------------
